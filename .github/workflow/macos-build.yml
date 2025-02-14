@@ -1,0 +1,34 @@
+name: macOS Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest  # Runs on GitHub's macOS runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install cmake ninja  # Install necessary tools
+
+      - name: Extract After Effects SDK
+        run: |
+          unzip -o May2023_AfterEffectsSDK_Win.zip
+
+
+
+      - name: Configure build
+        run: cmake -B build -S . -G "Ninja"
+        env:
+          AE_SDK_PATH: $GITHUB_WORKSPACE/AfterEffectsSDK
+
+      - name: Compile code
+        run: cmake --build build
